@@ -19,9 +19,11 @@ function App() {
   const [marketplace, setMarketplace] = useState({});
 
   const [image, setImage] = useState();
-  const [price, setPrice] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [properties, setProperties] = useState("");
+  const [stats, setStats] = useState("");
+  const [traits, setTraits] = useState("");
 
   const handleAccount = async (accounts) => {
     setAccount(accounts[0]);
@@ -38,6 +40,7 @@ function App() {
       signer
     );
 
+    console.log(marketplace);
     const accounts = await provider.send("eth_requestAccounts", []);
 
     setNft(nft);
@@ -67,14 +70,10 @@ function App() {
   };
 
   const mintThenList = async (url) => {
-    const id = await nft.tokenCount();
-    // mint the nft
-    await (await nft.mint(url)).wait();
-    // get tokenId of the new NFT
-    await (await nft.approve(marketplace.address, id)).wait();
-    const listingPrice = ethers.utils.parseEther(price);
     // list the item in marketplace
-    await (await marketplace.initialMint(id, "", "", "")).wait();
+    await (
+      await marketplace.initialMint(url, properties, stats, traits)
+    ).wait();
   };
 
   return (
@@ -111,21 +110,41 @@ function App() {
 
         <div className="form-input">
           <input
-            type="number"
-            name="price"
-            value={price ? price : ""}
-            placeholder="Price"
-            onChange={({ target }) => setPrice(target.value)}
+            type="text"
+            name="description"
+            value={description}
+            placeholder="Description"
+            onChange={({ target }) => setDescription(target.value)}
           />
         </div>
 
         <div className="form-input">
           <input
             type="text"
-            name="description"
-            value={description}
-            placeholder="Description"
-            onChange={({ target }) => setDescription(target.value)}
+            name="properties"
+            value={properties}
+            placeholder="Properties"
+            onChange={({ target }) => setProperties(target.value)}
+          />
+        </div>
+
+        <div className="form-input">
+          <input
+            type="text"
+            name="stats"
+            value={stats}
+            placeholder="Stats"
+            onChange={({ target }) => setStats(target.value)}
+          />
+        </div>
+
+        <div className="form-input">
+          <input
+            type="text"
+            name="traits"
+            value={traits}
+            placeholder="Traits"
+            onChange={({ target }) => setTraits(target.value)}
           />
         </div>
 
